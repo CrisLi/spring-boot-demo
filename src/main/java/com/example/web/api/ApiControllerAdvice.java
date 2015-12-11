@@ -65,6 +65,7 @@ public class ApiControllerAdvice {
     public ResponseEntity<ErrorResponse> handException(HttpServletRequest request, Exception exception) {
 
         logger.error("Request {} raised \"{}\" exception ", request.getRequestURL(), exception.getClass().getName());
+        logger.error(exception.getClass().getName(), exception);
 
         ResponseStatus responseStatus = exception.getClass().getAnnotation(ResponseStatus.class);
         HttpStatus httpStatus = null;

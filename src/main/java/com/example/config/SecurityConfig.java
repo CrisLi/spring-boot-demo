@@ -36,7 +36,8 @@ public class SecurityConfig {
 
         @Override
         protected void configure(HttpSecurity http) throws Exception {
-            http.antMatcher("/api/**") //
+            http.csrf().disable() //
+                    .antMatcher("/api/**") //
                     .authorizeRequests() //
                     .anyRequest() //
                     .hasAnyRole("USER", "ADMIN") //
@@ -55,7 +56,8 @@ public class SecurityConfig {
 
         @Override
         protected void configure(HttpSecurity http) throws Exception {
-            http.antMatcher("/actuators/**") //
+            http.csrf().disable() //
+                    .antMatcher("/actuators/**") //
                     .authorizeRequests() //
                     .anyRequest() //
                     .hasRole("ADMIN") //

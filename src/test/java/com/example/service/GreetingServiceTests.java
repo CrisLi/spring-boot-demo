@@ -1,5 +1,6 @@
 package com.example.service;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 import org.junit.After;
@@ -40,6 +41,7 @@ public class GreetingServiceTests extends AbstractTest {
         
         Greeting greeting = new Greeting();
         greeting.setText("hello kitty");
+        greeting.setScheduledDateTime(LocalDateTime.now());
         
         greetingService.create(greeting);
 

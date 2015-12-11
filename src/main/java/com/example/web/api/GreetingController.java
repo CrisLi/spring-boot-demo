@@ -9,6 +9,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.userdetails.User;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -16,6 +17,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.example.annotation.CurrentUser;
 import com.example.model.Greeting;
 import com.example.service.EmailService;
 import com.example.service.GreetingService;
@@ -44,7 +46,8 @@ public class GreetingController {
     }
 
     @RequestMapping(method = RequestMethod.POST)
-    public ResponseEntity<Greeting> create(@RequestBody Greeting greeting) {
+    public ResponseEntity<Greeting> create(@RequestBody Greeting greeting, @CurrentUser User user) {
+        logger.info("{} is creating a new Greeting.", user.getUsername());
         return new ResponseEntity<>(greetingService.create(greeting), HttpStatus.CREATED);
     }
 

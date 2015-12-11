@@ -1,4 +1,4 @@
-package com.example.service;
+package com.example.web.api;
 
 import java.util.Arrays;
 import java.util.List;
@@ -19,6 +19,8 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.example.AbstractControllerTest;
 import com.example.model.Greeting;
+import com.example.service.EmailService;
+import com.example.service.GreetingService;
 import com.example.web.api.GreetingController;
 
 @Transactional

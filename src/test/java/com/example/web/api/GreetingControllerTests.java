@@ -1,9 +1,10 @@
-package com.example.service;
+package com.example.web.api;
 
 import static org.springframework.http.MediaType.APPLICATION_JSON;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 import javax.transaction.Transactional;
@@ -13,10 +14,12 @@ import org.junit.Before;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.web.servlet.MvcResult;
 
 import com.example.AbstractControllerTest;
 import com.example.model.Greeting;
+import com.example.service.GreetingService;
 
 @Transactional
 public class GreetingControllerTests extends AbstractControllerTest {
@@ -63,11 +66,13 @@ public class GreetingControllerTests extends AbstractControllerTest {
     }
 
     @Test
+    @WithMockUser
     public void testCreateGreeting() throws Exception {
 
         String uri = "/api/greetings";
         Greeting greeting = new Greeting();
         greeting.setText("hello kitty");
+        greeting.setScheduledDateTime(LocalDateTime.now());
 
         MvcResult result = mvc
                 .perform(post(uri) //
