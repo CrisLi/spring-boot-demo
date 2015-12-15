@@ -1,5 +1,6 @@
 package com.example.model;
 
+import java.io.Serializable;
 import java.time.LocalDateTime;
 
 import javax.persistence.Entity;
@@ -11,7 +12,9 @@ import org.hibernate.annotations.Type;
 
 @Entity
 @Table(name = "GREETINGS")
-public class Greeting {
+public class Greeting implements Serializable {
+
+    private static final long serialVersionUID = -4009909872380780289L;
 
     @Id
     @GeneratedValue
@@ -27,6 +30,7 @@ public class Greeting {
 
     public Greeting(String text) {
         this.text = text;
+        this.setScheduledDateTime(LocalDateTime.now());
     }
 
     public Long getId() {

@@ -5,10 +5,12 @@ import static com.example.config.CacheConfig.GREETINGS;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.actuate.autoconfigure.ActuatorMetricWriter;
 import org.springframework.cache.annotation.CacheConfig;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.CachePut;
 import org.springframework.cache.annotation.Cacheable;
+import org.springframework.jms.core.JmsTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -25,6 +27,9 @@ public class GreetingServiceBean implements GreetingService {
     @Autowired
     private GreetingRespository greetingRespository;
 
+    @Autowired
+    private JmsTemplate jmsTemplate;
+
     @CachePut(key = "#result.id")
     @Override
     public Greeting create(Greeting greeting) {
@@ -34,6 +39,8 @@ public class GreetingServiceBean implements GreetingService {
         if (greeting.getId() == 5) {
             throw new DataInvalidException(Greeting.class);
         }
+
+        jmsTemplate.convertAndSend("greetings", greeting);
 
         return greeting;
     }
