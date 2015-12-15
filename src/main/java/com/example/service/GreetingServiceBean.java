@@ -5,17 +5,16 @@ import static com.example.config.CacheConfig.GREETINGS;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.actuate.autoconfigure.ActuatorMetricWriter;
 import org.springframework.cache.annotation.CacheConfig;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.CachePut;
 import org.springframework.cache.annotation.Cacheable;
-import org.springframework.jms.core.JmsTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.example.exception.DataInvalidException;
 import com.example.exception.ResourceNotFoundException;
+import com.example.jms.MessageSender;
 import com.example.model.Greeting;
 import com.example.repository.GreetingRespository;
 
@@ -28,7 +27,7 @@ public class GreetingServiceBean implements GreetingService {
     private GreetingRespository greetingRespository;
 
     @Autowired
-    private JmsTemplate jmsTemplate;
+    private MessageSender<Greeting> messageSender;
 
     @CachePut(key = "#result.id")
     @Override
@@ -40,7 +39,7 @@ public class GreetingServiceBean implements GreetingService {
             throw new DataInvalidException(Greeting.class);
         }
 
-        jmsTemplate.convertAndSend("greetings", greeting);
+        messageSender.send("greetings", "create-greeting", greeting);
 
         return greeting;
     }
