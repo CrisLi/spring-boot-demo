@@ -1,17 +1,18 @@
 package com.example.security;
 
+import static org.springframework.security.core.authority.AuthorityUtils.createAuthorityList;
+
 import java.util.Collection;
-import java.util.Collections;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.GrantedAuthority;
-import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
+import com.example.exception.ResourceNotFoundException;
 import com.example.model.Account;
 import com.example.service.AccountService;
 
@@ -24,16 +25,18 @@ public class AccountUserDetailsService implements UserDetailsService {
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
 
-        Account account = accountService.findByUsername(username);
+        try {
 
-        if (account == null) {
+            Account account = accountService.findByUsername(username);
+
+            Collection<GrantedAuthority> authorities = createAuthorityList("ROLE_" + account.getRole().toString());
+
+            return new User(account.getUsername(), account.getPassword(), authorities);
+
+        } catch (ResourceNotFoundException e) {
             throw new UsernameNotFoundException("Username \"" + username + "\" is not found.");
         }
 
-        Collection<GrantedAuthority> authorities = Collections
-                .singleton(new SimpleGrantedAuthority("ROLE_" + account.getRole().toString()));
-
-        return new User(account.getUsername(), account.getPassword(), authorities);
     }
 
 }

@@ -1,15 +1,17 @@
 package com.example.service;
 
+import static com.example.config.CacheConfig.GREETINGS;
+
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.CacheConfig;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.CachePut;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.example.config.CacheConfig;
 import com.example.exception.DataInvalidException;
 import com.example.exception.ResourceNotFoundException;
 import com.example.model.Greeting;
@@ -17,12 +19,13 @@ import com.example.repository.GreetingRespository;
 
 @Service
 @Transactional
+@CacheConfig(cacheNames = GREETINGS)
 public class GreetingServiceBean implements GreetingService {
 
     @Autowired
     private GreetingRespository greetingRespository;
 
-    @CachePut(value = CacheConfig.GREETINGS, key = "#result.id")
+    @CachePut(key = "#result.id")
     @Override
     public Greeting create(Greeting greeting) {
 
@@ -35,7 +38,7 @@ public class GreetingServiceBean implements GreetingService {
         return greeting;
     }
 
-    @CachePut(value = CacheConfig.GREETINGS, key = "#id")
+    @CachePut(key = "#id")
     @Override
     public Greeting update(Long id, Greeting greeting) {
         Greeting oldGreeting = this.findOne(id);
@@ -44,7 +47,7 @@ public class GreetingServiceBean implements GreetingService {
     }
 
     @Transactional(readOnly = true)
-    @Cacheable(value = CacheConfig.GREETINGS, key = "#id")
+    @Cacheable(key = "#id")
     @Override
     public Greeting findOne(Long id) {
         Greeting greeting = greetingRespository.findOne(id);
@@ -60,7 +63,7 @@ public class GreetingServiceBean implements GreetingService {
         return greetingRespository.findAll();
     }
 
-    @CacheEvict(value = CacheConfig.GREETINGS, allEntries = true)
+    @CacheEvict(allEntries = true)
     @Override
     public void evictCache() {
     }
